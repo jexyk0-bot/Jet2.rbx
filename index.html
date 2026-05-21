@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jet2.rbx - Friendly Low Fares</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <div id="auth-container" class="auth-container">
+    <section id="register-view" class="auth-view active" aria-labelledby="register-title">
+      <div class="auth-card">
+        <div class="brand-mark">Jet2<span>.rbx</span></div>
+        <p class="eyebrow">Friendly low fares</p>
+        <h1 id="register-title">Create your passenger account</h1>
+        <p class="auth-copy">Register once with your Roblox name, login, and birth date. Then you can book one active flight.</p>
+
+        <form id="register-form" class="stacked-form">
+          <div class="form-group">
+            <label for="reg-roblox-name">Roblox name</label>
+            <input id="reg-roblox-name" type="text" autocomplete="nickname" placeholder="Guardbl" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-login">Login</label>
+            <input id="reg-login" type="text" autocomplete="username" placeholder="guardbl" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-birthdate">Birth date</label>
+            <input id="reg-birthdate" type="date" required>
+          </div>
+          <button type="submit" class="btn-primary btn-large">Register</button>
+        </form>
+
+        <p class="auth-switch">Already registered? <a href="#" onclick="switchToLogin(event)">Login</a></p>
+      </div>
+    </section>
+
+    <section id="login-view" class="auth-view" aria-labelledby="login-title">
+      <div class="auth-card">
+        <div class="brand-mark">Jet2<span>.rbx</span></div>
+        <p class="eyebrow">Welcome back</p>
+        <h1 id="login-title">Login to book flights</h1>
+        <p class="auth-copy">Use your login and Roblox name so the account match is exact.</p>
+
+        <form id="login-form" class="stacked-form">
+          <div class="form-group">
+            <label for="login-name">Login</label>
+            <input id="login-name" type="text" autocomplete="username" placeholder="guardbl" required>
+          </div>
+          <div class="form-group">
+            <label for="login-roblox-name">Roblox name</label>
+            <input id="login-roblox-name" type="text" autocomplete="nickname" placeholder="Guardbl" required>
+          </div>
+          <button type="submit" class="btn-primary btn-large">Login</button>
+        </form>
+
+        <p class="auth-switch">Need an account? <a href="#" onclick="switchToRegister(event)">Register</a></p>
+      </div>
+    </section>
+  </div>
+
+  <div id="main-app" class="main-app hidden">
+    <header class="main-header">
+      <div class="header-top">
+        <a class="logo" href="#home" data-view="home" aria-label="Jet2.rbx home">Jet2<span>.rbx</span></a>
+        <nav class="nav-menu" aria-label="Main navigation">
+          <a href="#home" data-view="home" class="active">Home</a>
+          <a href="#map" data-view="map">Map</a>
+          <a href="#schedule" data-view="schedule">Schedule</a>
+          <a href="#bookings" data-view="bookings">My Bookings</a>
+        </nav>
+        <div class="header-actions">
+          <span class="user-welcome" id="user-welcome"></span>
+          <button class="icon-button" id="settings-btn" type="button" title="Settings" aria-label="Settings" onclick="openSettingsModal()">
+            <span aria-hidden="true">⚙️</span>
+          </button>
+          <button class="icon-button" id="staff-btn" type="button" title="Staff panel" aria-label="Staff panel">
+            <span aria-hidden="true">ST</span>
+          </button>
+          <button class="icon-button" id="logout-btn" type="button" title="Logout" aria-label="Logout">
+            <span aria-hidden="true">OUT</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="views-container">
+      <section id="home-view" class="view active" aria-labelledby="home-title">
+        <div class="home-shell">
+          <div class="phone-panel">
+            <div class="phone-device">
+              <img class="phone-frame" src="Phone.png" alt="" aria-hidden="true">
+              <div class="phone-screen">
+                <div class="phone-top">
+                  <div class="phone-logo">Jet2<span>.rbx</span></div>
+                  <div class="phone-actions">
+                    <button type="button" class="round-tool" title="Help">?</button>
+                    <button type="button" class="round-tool" title="Alerts">!</button>
+                  </div>
+                </div>
+
+                <div class="phone-content">
+                  <h1 id="home-title">Welcome, <span id="home-username"></span></h1>
+                  <h2>Flight Information</h2>
+                  <article id="home-flight-card" class="featured-flight-card"></article>
+
+                  <section aria-labelledby="explore-title">
+                    <div class="section-title-row">
+                      <h3 id="explore-title">Explore Destination</h3>
+                      <a href="#map" data-view="map">Map</a>
+                    </div>
+                    <div id="featured-destinations" class="explore-grid"></div>
+                  </section>
+
+                  <div class="offer-strip">
+                    <strong>Save 15%</strong>
+                    <span>Roblox summer routes</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="network-panel" aria-labelledby="network-title">
+            <div class="panel-heading">
+              <p class="eyebrow">Flight search</p>
+              <h2 id="network-title">Plan a Roblox route</h2>
+              <p>Choose one way or return, then search scheduled flights from England airports to Jet2.rbx destinations.</p>
+            </div>
+
+            <section class="booking-search-panel" aria-labelledby="quick-book-title">
+              <h3 id="quick-book-title" class="visually-hidden">Book a flight</h3>
+              <form id="quick-book-form">
+                <div class="trip-type-row" role="radiogroup" aria-label="Trip type">
+                  <label>
+                    <input id="quick-trip-return" type="radio" name="quick-trip-type" value="return">
+                    <span>Return</span>
+                  </label>
+                  <label>
+                    <input id="quick-trip-oneway" type="radio" name="quick-trip-type" value="one-way" checked>
+                    <span>One way</span>
+                  </label>
+                </div>
+
+                <div class="search-fields">
+                  <div class="search-field">
+                    <label for="quick-from">Departing from</label>
+                    <select id="quick-from" required></select>
+                  </div>
+                  <div class="search-field">
+                    <label for="quick-to">Destination</label>
+                    <select id="quick-to" required></select>
+                  </div>
+                  <div class="search-field date-field">
+                    <label for="quick-date">Travel date</label>
+                    <input id="quick-date" type="date" required>
+                  </div>
+                  <div id="return-date-field" class="search-field date-field hidden">
+                    <label for="quick-return-date">Return date</label>
+                    <input id="quick-return-date" type="date">
+                  </div>
+                  <div class="search-field passenger-field">
+                    <label for="quick-passengers">Passengers</label>
+                    <select id="quick-passengers">
+                      <option value="1 Passenger">1 Passenger</option>
+                      <option value="2 Adults" selected>2 Adults</option>
+                      <option value="3 Passengers">3 Passengers</option>
+                      <option value="4 Passengers">4 Passengers</option>
+                    </select>
+                  </div>
+                  <button type="submit" class="find-flight-btn">Find flights</button>
+                </div>
+              </form>
+            </section>
+
+            <div id="home-map" class="network-map compact-map"></div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="map-view" class="view" aria-labelledby="map-title">
+        <div class="page-shell">
+          <div class="panel-heading wide">
+            <p class="eyebrow">Jet2.rbx network</p>
+            <h1 id="map-title">Destination Map</h1>
+            <p>Click an airport to light it up and see the planned routes connected to it.</p>
+          </div>
+          <div id="route-map" class="network-map large-map"></div>
+          <div id="airport-flights-panel" class="airport-flights-panel hidden">
+            <div class="airport-flights-header">
+              <h3 id="airport-flights-title">Flights</h3>
+              <button class="airport-flights-close" type="button" onclick="closeAirportFlightsPanel()">✕</button>
+            </div>
+            <div id="airport-flights-list" class="airport-flights-list"></div>
+          </div>
+          <div id="airport-list" class="airport-grid"></div>
+        </div>
+      </section>
+
+      <section id="schedule-view" class="view" aria-labelledby="schedule-title">
+        <div class="page-shell">
+          <div class="schedule-heading">
+            <div>
+              <p class="eyebrow">Live planning</p>
+              <h1 id="schedule-title">Flight Schedule</h1>
+              <p id="schedule-filter-label">Choose a route from Book a Flight or book directly from the full schedule.</p>
+            </div>
+            <button id="clear-filter-btn" class="btn-secondary hidden" type="button">Clear filter</button>
+          </div>
+          <div id="schedule-list" class="flight-list"></div>
+        </div>
+      </section>
+
+      <section id="bookings-view" class="view" aria-labelledby="bookings-title">
+        <div class="page-shell">
+          <div class="panel-heading wide">
+            <p class="eyebrow">Manage booking</p>
+            <h1 id="bookings-title">My Bookings</h1>
+            <p>Your confirmed flight and booking number stay here.</p>
+          </div>
+          <div id="bookings-list" class="bookings-list"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="booking-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="booking-modal-title">
+    <div class="modal-content">
+      <button class="modal-close" type="button" onclick="closeBookingModal()" aria-label="Close">x</button>
+      <p class="eyebrow">Confirmed booking</p>
+      <h2 id="booking-modal-title">Your flight is booked</h2>
+      <div id="booking-details"></div>
+      <div id="booking-actions">
+        <button class="btn-primary btn-large" type="button" onclick="closeBookingModal()">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="staff-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="staff-title">
+    <div class="modal-content staff-modal-content">
+      <button class="modal-close" type="button" onclick="closeStaffModal()" aria-label="Close">x</button>
+
+      <section id="staff-login-view">
+        <p class="eyebrow">Crew only</p>
+        <h2 id="staff-title">Staff Login</h2>
+        <form id="staff-login-form" class="stacked-form">
+          <div class="form-group">
+            <label for="staff-code">Staff code</label>
+            <input id="staff-code" type="password" placeholder="Enter staff code" required>
+          </div>
+          <button type="submit" class="btn-primary btn-large">Open Staff Panel</button>
+        </form>
+      </section>
+
+      <section id="staff-dashboard-view" class="hidden" aria-labelledby="staff-dashboard-title">
+        <div class="staff-header">
+          <div>
+            <p class="eyebrow">Flight planning</p>
+            <h2 id="staff-dashboard-title">Staff Panel</h2>
+          </div>
+          <button class="btn-secondary" type="button" onclick="logoutStaff()">Logout</button>
+        </div>
+
+        <div class="staff-tabs" role="tablist" aria-label="Staff tools">
+          <button class="staff-tab active" type="button" data-staff-tab="flights">Flights</button>
+          <button class="staff-tab" type="button" data-staff-tab="informations">Informations</button>
+          <button class="staff-tab" type="button" data-staff-tab="aircraft">Aircraft</button>
+          <button class="staff-tab" type="button" data-staff-tab="staff">Staff</button>
+        </div>
+
+        <div id="staff-flights-tab" class="staff-tab-panel active">
+          <div class="staff-section">
+            <h3>Create Flight</h3>
+            <form id="add-flight-form" class="create-flight-card">
+              <div class="flight-card-header">
+                <div class="flight-card-badges">
+                  <select id="flight-trip-type" class="flight-badge-select" required>
+                    <option value="one-way">One way</option>
+                    <option value="return">Return</option>
+                  </select>
+                  <input id="flight-num" type="text" placeholder="LS1897" class="flight-badge-input" required>
+                </div>
+                <button type="submit" class="btn-primary">Add Flight</button>
+              </div>
+              <div class="flight-card-body">
+                <div class="flight-route-section">
+                  <div class="form-group">
+                    <label for="flight-from">From</label>
+                    <select id="flight-from" required></select>
+                  </div>
+                  <div class="flight-arrow">→</div>
+                  <div class="form-group">
+                    <label for="flight-to">To</label>
+                    <select id="flight-to" required></select>
+                  </div>
+                  <div class="form-group">
+                    <label for="flight-aircraft">Aircraft</label>
+                    <select id="flight-aircraft" required>
+                      <option value="Boeing 737-800 Jet2">Boeing 737-800 Jet2</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="flight-details-grid">
+                  <div class="form-group">
+                    <label for="flight-date">Flight date</label>
+                    <input id="flight-date" type="date" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="flight-depart">Departure</label>
+                    <input id="flight-depart" type="time" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="flight-arrive">Arrival</label>
+                    <input id="flight-arrive" type="time" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="flight-terminal">Terminal</label>
+                    <input id="flight-terminal" type="text" placeholder="1" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="flight-gate">Gate</label>
+                    <input id="flight-gate" type="text" placeholder="N/A" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="flight-delete">Delete from schedule</label>
+                    <input id="flight-delete" type="date" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="flight-booking-open">Booking opens</label>
+                    <input id="flight-booking-open" type="datetime-local" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="flight-booking-close">Booking closes</label>
+                    <input id="flight-booking-close" type="datetime-local" required>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div class="staff-flight-layout">
+            <div class="staff-section">
+              <div class="section-title-row">
+                <h3>Planned Flights</h3>
+                <span id="staff-flight-count">0 flights</span>
+              </div>
+              <div id="staff-flights" class="staff-bookings"></div>
+            </div>
+
+            <div class="staff-section staff-flight-detail" id="staff-flight-detail">
+              <div class="empty-state">Choose a planned flight to see booked players and aircraft setup.</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="staff-informations-tab" class="staff-tab-panel">
+          <div class="staff-section">
+            <div class="section-title-row">
+              <h3>Informations</h3>
+              <span id="staff-information-count">0 airports</span>
+            </div>
+            <div id="staff-informations"></div>
+          </div>
+        </div>
+
+        <div id="staff-aircraft-tab" class="staff-tab-panel">
+          <div class="staff-section">
+            <div class="section-title-row">
+              <h3>Aircraft</h3>
+              <span id="staff-aircraft-count">0 aircraft</span>
+            </div>
+            <div id="staff-aircraft"></div>
+          </div>
+        </div>
+
+        <div id="staff-staff-tab" class="staff-tab-panel">
+          <div class="staff-section">
+            <div class="section-title-row">
+              <h3>Staff</h3>
+              <span id="staff-booking-count">0 bookings</span>
+            </div>
+            <div id="staff-bookings" class="staff-bookings"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div id="cancel-booking-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="cancel-booking-title">
+    <div class="modal-content">
+      <p class="eyebrow">Confirmation</p>
+      <h2 id="cancel-booking-title">Cancel Booking?</h2>
+      <p id="cancel-booking-message">Are you sure you want to cancel this booking? This action cannot be undone.</p>
+      <div id="cancel-booking-actions">
+        <button type="button" class="btn-secondary btn-large" onclick="closeCancelBookingModal()">Keep Booking</button>
+        <button type="button" class="btn-danger btn-large" onclick="confirmCancelBooking()">Yes, Cancel Booking</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="settings-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <div class="modal-content">
+      <button class="modal-close" type="button" onclick="closeSettingsModal()" aria-label="Close">x</button>
+      <p class="eyebrow">Account</p>
+      <h2 id="settings-title">Settings</h2>
+      
+      <div class="settings-section">
+        <h3>Change Login</h3>
+        <form id="change-login-form" class="stacked-form">
+          <div class="form-group">
+            <label for="current-login">Current Login</label>
+            <input id="current-login" type="text" readonly>
+          </div>
+          <div class="form-group">
+            <label for="new-login">New Login</label>
+            <input id="new-login" type="text" placeholder="Enter new login" required>
+          </div>
+          <button type="submit" class="btn-primary btn-large">Update Login</button>
+        </form>
+      </div>
+
+      <div class="settings-section danger-zone">
+        <h3>Danger Zone</h3>
+        <p>Deleting your account is permanent and cannot be undone.</p>
+        <button type="button" class="btn-danger btn-large" onclick="confirmDeleteAccount()">Delete Account</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="edit-flight-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="edit-flight-title">
+    <div class="modal-content">
+      <button class="modal-close" type="button" onclick="closeEditFlightModal()" aria-label="Close">x</button>
+      <p class="eyebrow">Flight Details</p>
+      <h2 id="edit-flight-title">Edit Flight</h2>
+      <form id="edit-flight-form" class="stacked-form">
+        <div class="form-group">
+          <label for="edit-flight-number">Flight Number</label>
+          <input id="edit-flight-number" type="text" required>
+        </div>
+        <div class="form-row two-equal">
+          <div class="form-group">
+            <label for="edit-flight-departure-time">Departure Time</label>
+            <input id="edit-flight-departure-time" type="time" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-flight-arrival-time">Arrival Time</label>
+            <input id="edit-flight-arrival-time" type="time" required>
+          </div>
+        </div>
+        <div class="form-row two-equal">
+          <div class="form-group">
+            <label for="edit-flight-terminal">Terminal</label>
+            <input id="edit-flight-terminal" type="text" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-flight-gate">Gate</label>
+            <input id="edit-flight-gate" type="text" required>
+          </div>
+        </div>
+        <div class="form-row two-equal">
+          <div class="form-group">
+            <label for="edit-flight-booking-open">Booking Opens</label>
+            <input id="edit-flight-booking-open" type="datetime-local" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-flight-booking-close">Booking Closes</label>
+            <input id="edit-flight-booking-close" type="datetime-local" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="edit-flight-delete-on">Delete from Schedule</label>
+          <input id="edit-flight-delete-on" type="date" required>
+        </div>
+        <div id="edit-flight-actions">
+          <button type="submit" class="btn-primary btn-large">Save Changes</button>
+          <button type="button" class="btn-secondary btn-large" onclick="closeEditFlightModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>
